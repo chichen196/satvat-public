@@ -1,0 +1,35 @@
+cff-version: 1.2.0
+message: "If you use this code or these tables, please cite the paper and the datasets."
+title: "satvat-public: SAT/VAT separation on public CT and MRI (code and derived tables)"
+authors:
+  - family-names: Chen
+    given-names: Chi-Hsien
+version: 1.0.0
+license: MIT
+repository-code: "https://github.com/chichen196/satvat-public"
+preferred-citation:
+  type: article
+  title: "Subcutaneous–visceral fat separation on public CT and MRI: a reproduced 2006 threshold method, a wall-following rule and deep learning"
+  authors:
+    - family-names: Chen
+      given-names: Chi-Hsien
+  status: in-preparation
+references:
+  - type: article
+    title: "AATCT-IDS: a benchmark abdominal adipose tissue CT image dataset for image denoising, semantic segmentation, and radiomics evaluation"
+    authors: [{family-names: Ma, given-names: Zhiyu}]
+    journal: "Computers in Biology and Medicine"
+    year: 2024
+    doi: 10.1016/j.compbiomed.2024.108628
+  - type: article
+    title: "CHAOS Challenge - combined (CT-MR) healthy abdominal organ segmentation"
+    authors: [{family-names: Kavur, given-names: A. Emre}]
+    journal: "Medical Image Analysis"
+    year: 2021
+    doi: 10.1016/j.media.2020.101950
+  - type: article
+    title: "VIBESegmentator: full body MRI segmentation for the NAKO and UK Biobank"
+    authors: [{family-names: Graf, given-names: Robert}]
+    journal: "European Radiology"
+    year: 2025
+    doi: 10.1007/s00330-025-12035-9

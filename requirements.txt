@@ -1,0 +1,10 @@
+numpy
+scipy
+pandas
+nibabel
+pydicom
+pillow
+matplotlib
+SimpleITK
+# for aattct_unet.py only (CPU, CUDA or Intel XPU build):
+# torch

@@ -1,0 +1,41 @@
+case,split,scanner,site,nx,ny,nz,px_x,px_y,slice_mm,stored_plane,labels,level_from,n_lung,abd_mm,n_level,n_level_cut,cut_edges,arm_slices,arm_cut_slices,arms,liver,spleen,gallbladder,aorta,kidney,fat_rim,body_median,lean_p30,ratio_to,fat_ratio,gall_ratio,spleen_ratio,aorta_ratio,kidney_ratio,guess,verdict,reasons
+chaos_0001,train,,,256,256,35,1.895,1.895,5.5,axial,1,kidney,3,176.0,24,0,,0,0,0.0,379.0,325.0,nan,nan,319.0,797.1,382.0,326.0,liver,2.103,nan,0.858,nan,0.842,,ok,
+chaos_0002,train,,,288,288,26,1.441,1.441,9.0,axial,1,kidney,11,135.0,11,0,,0,0,0.0,230.0,182.0,nan,nan,203.0,407.0,263.0,210.0,liver,1.77,nan,0.791,nan,0.883,,ok,
+chaos_0003,train,,,288,288,30,1.441,1.441,9.0,axial,1,kidney,17,108.0,12,0,,0,0,0.0,165.0,144.0,nan,nan,178.0,346.0,180.0,148.0,liver,2.097,nan,0.873,nan,1.079,,ok,
+chaos_0004,test,,,256,256,26,1.895,1.895,9.0,axial,0,below lungs,15,99.0,11,0,,0,0,0.0,nan,nan,nan,nan,nan,1238.0,926.0,687.0,lean,1.802,nan,nan,nan,nan,,check,99 mm below the lungs
+chaos_0005,train,,,256,256,30,1.699,1.699,9.0,axial,1,kidney,14,144.0,11,0,,0,0,0.0,433.0,302.0,nan,nan,331.0,800.0,476.0,385.0,liver,1.848,nan,0.697,nan,0.764,,ok,
+chaos_0006,test,,,256,256,26,1.738,1.738,9.0,axial,0,below lungs,13,117.0,13,0,,0,0,0.0,nan,nan,nan,nan,nan,996.0,669.0,523.0,lean,1.904,nan,nan,nan,nan,,ok,
+chaos_0007,test,,,288,288,26,1.441,1.441,9.0,axial,0,below lungs,9,153.0,17,0,,0,0,0.0,nan,nan,nan,nan,nan,542.0,363.0,280.0,lean,1.936,nan,nan,nan,nan,,ok,
+chaos_0008,train,,,288,288,36,1.441,1.441,6.0,axial,1,kidney,11,150.0,22,0,,0,0,0.0,118.0,111.0,nan,nan,96.0,253.0,148.0,110.0,liver,2.144,nan,0.941,nan,0.814,,ok,
+chaos_0009,test,,,288,288,32,1.441,1.441,6.0,axial,0,below lungs,3,174.0,29,0,,0,0,0.0,nan,nan,nan,nan,nan,262.0,122.0,100.0,lean,2.62,nan,nan,nan,nan,,ok,
+chaos_0010,train,,,256,256,50,1.895,1.895,5.5,axial,1,kidney,22,154.0,23,0,,0,0,0.0,532.0,408.0,nan,nan,434.0,940.0,556.0,441.0,liver,1.767,nan,0.767,nan,0.816,,ok,
+chaos_0011,test,,,256,256,26,1.816,1.816,9.0,axial,0,below lungs,13,117.0,13,1,L,0,0,0.0,nan,nan,nan,nan,nan,1085.0,724.0,555.0,lean,1.955,nan,nan,nan,nan,,check,1/13 level slices cut (L)
+chaos_0012,test,,,256,256,40,1.895,1.895,5.5,axial,0,below lungs,11,159.5,29,0,,0,0,0.0,nan,nan,nan,nan,nan,1053.0,729.0,545.0,lean,1.932,nan,nan,nan,nan,,ok,
+chaos_0013,train,,,288,288,30,1.441,1.441,9.0,axial,1,kidney,13,153.0,13,0,,0,0,0.0,218.0,150.0,nan,nan,154.0,430.0,284.0,200.0,liver,1.972,nan,0.688,nan,0.706,,ok,
+chaos_0014,test,,,256,256,30,1.23,1.23,9.0,axial,0,below lungs,11,162.0,18,0,,0,0,0.0,nan,nan,nan,nan,nan,666.0,339.0,281.0,lean,2.37,nan,nan,nan,nan,,ok,
+chaos_0015,train,,,256,256,26,1.699,1.699,9.0,axial,1,kidney,7,171.0,16,0,,0,0,0.0,418.0,163.0,nan,nan,391.0,928.0,591.0,429.0,liver,2.22,nan,0.39,nan,0.935,,ok,
+chaos_0016,test,,,256,256,30,1.699,1.699,9.0,axial,0,below lungs,15,135.0,15,0,,0,0,0.0,nan,nan,nan,nan,nan,791.0,552.0,390.0,lean,2.028,nan,nan,nan,nan,,ok,
+chaos_0017,test,,,256,256,30,1.699,1.699,9.0,axial,0,below lungs,15,135.0,15,0,,0,0,0.0,nan,nan,nan,nan,nan,678.0,362.0,283.0,lean,2.396,nan,nan,nan,nan,,ok,
+chaos_0018,test,,,288,288,30,1.441,1.441,9.0,axial,0,below lungs,13,153.0,17,0,,0,0,0.0,nan,nan,nan,nan,nan,430.0,299.0,212.0,lean,2.028,nan,nan,nan,nan,,ok,
+chaos_0019,train,,,288,288,30,1.441,1.441,9.0,axial,1,kidney,14,144.0,15,0,,0,0,0.0,209.0,157.0,nan,nan,162.0,411.0,238.0,177.0,liver,1.967,nan,0.751,nan,0.775,,ok,
+chaos_0020,train,,,288,288,26,1.441,1.441,9.0,axial,1,kidney,5,189.0,14,0,,0,0,0.0,294.0,224.0,nan,nan,236.0,515.0,295.0,235.0,liver,1.752,nan,0.762,nan,0.803,,ok,
+chaos_0021,train,,,256,256,34,1.816,1.816,8.0,axial,1,kidney,6,224.0,12,0,,0,0,0.0,407.0,281.0,nan,nan,313.0,765.0,439.0,344.0,liver,1.88,nan,0.69,nan,0.769,,ok,
+chaos_0022,train,,,256,256,35,2.031,2.031,9.0,axial,1,kidney,14,189.0,14,0,,0,0,0.0,533.0,451.0,nan,nan,460.0,1140.0,689.0,510.0,liver,2.139,nan,0.846,nan,0.863,,check,in-plane 2.03 mm
+chaos_0023,test,,,256,256,33,1.855,1.855,9.0,axial,0,below lungs,13,180.0,20,0,,2,2,0.0,nan,nan,nan,nan,nan,1078.0,609.0,446.0,lean,2.417,nan,nan,nan,nan,,ok,
+chaos_0024,test,,,256,256,33,1.699,1.699,9.0,axial,0,below lungs,16,153.0,17,0,,0,0,0.0,nan,nan,nan,nan,nan,776.0,466.0,330.0,lean,2.352,nan,nan,nan,nan,,ok,
+chaos_0025,test,,,352,352,35,1.42,1.42,6.0,axial,0,below lungs,5,180.0,30,0,,0,0,0.0,nan,nan,nan,nan,nan,561.0,330.0,256.0,lean,2.191,nan,nan,nan,nan,,ok,
+chaos_0026,test,,,256,256,30,2.012,2.012,9.0,axial,0,below lungs,21,81.0,9,0,,6,0,0.008,nan,nan,nan,nan,nan,498.0,408.0,326.0,lean,1.528,nan,nan,nan,nan,,check,in-plane 2.01 mm; 81 mm below the lungs
+chaos_0027,test,,,256,256,30,2.031,2.031,9.0,axial,0,below lungs,18,108.0,12,0,,0,0,0.0,nan,nan,nan,nan,nan,686.0,433.0,341.0,lean,2.012,nan,nan,nan,nan,,check,in-plane 2.03 mm
+chaos_0028,test,,,288,288,32,1.441,1.441,6.0,axial,0,below lungs,8,144.0,24,0,,0,0,0.0,nan,nan,nan,nan,nan,245.0,126.0,100.0,lean,2.45,nan,nan,nan,nan,,ok,
+chaos_0029,test,,,320,320,34,1.359,1.359,6.0,axial,0,below lungs,6,168.0,28,0,,0,0,0.0,nan,nan,nan,nan,nan,713.0,498.0,357.0,lean,1.997,nan,nan,nan,nan,,ok,
+chaos_0030,test,,,400,400,50,1.05,1.05,4.889,axial,0,below lungs,6,215.1,44,10,LR,40,25,0.075,nan,nan,nan,nan,nan,884.0,434.0,338.0,lean,2.615,nan,nan,nan,nan,,check,"arms; 10/44 level slices cut (L,R)"
+chaos_0031,train,,,256,256,30,1.699,1.699,9.0,axial,1,kidney,12,162.0,12,0,,0,0,0.0,232.0,160.0,nan,nan,179.0,433.0,249.0,186.0,liver,1.866,nan,0.69,nan,0.772,,ok,
+chaos_0032,train,,,256,256,33,1.816,1.816,9.0,axial,1,kidney,13,180.0,19,0,,0,0,0.0,351.0,266.0,nan,nan,288.0,709.0,432.0,321.0,liver,2.02,nan,0.758,nan,0.821,,ok,
+chaos_0033,train,,,256,256,33,1.738,1.738,9.0,axial,1,kidney,15,162.0,15,0,,0,0,0.0,263.0,239.0,nan,nan,357.0,400.0,349.0,294.0,liver,1.521,nan,0.909,nan,1.357,,ok,
+chaos_0034,train,,,256,256,35,1.738,1.738,5.5,axial,1,kidney,15,110.0,20,0,,0,0,0.0,295.0,212.0,nan,nan,226.0,614.0,322.0,239.0,liver,2.081,nan,0.719,nan,0.766,,ok,
+chaos_0035,test,,,384,384,50,1.172,1.172,4.889,axial,0,below lungs,14,176.0,36,0,,36,6,0.2,nan,nan,nan,nan,nan,1170.0,498.0,407.0,lean,2.875,nan,nan,nan,nan,,check,arms
+chaos_0036,train,,,256,256,38,1.699,1.699,9.0,axial,1,kidney,13,225.0,12,0,,0,0,0.0,282.0,264.0,nan,nan,371.0,436.0,284.0,205.0,liver,1.546,nan,0.936,nan,1.316,,ok,
+chaos_0037,train,,,256,256,30,1.465,1.465,9.0,axial,1,kidney,17,117.0,12,0,,0,0,0.0,204.0,150.0,nan,nan,156.0,388.0,237.0,174.0,liver,1.902,nan,0.735,nan,0.765,,ok,
+chaos_0038,train,,,288,288,34,1.441,1.441,9.0,axial,1,kidney,9,225.0,13,0,,0,0,0.0,359.0,252.0,nan,nan,274.0,556.0,339.0,268.0,liver,1.549,nan,0.702,nan,0.763,,ok,
+chaos_0039,train,,,256,256,26,1.699,1.699,9.0,axial,1,kidney,10,144.0,11,0,,0,0,0.0,386.5,280.0,nan,nan,304.0,651.0,408.0,324.0,liver,1.684,nan,0.724,nan,0.787,,ok,
+chaos_0040,test,,,256,256,30,1.699,1.699,9.0,axial,0,below lungs,15,135.0,15,0,,0,0,0.0,nan,nan,nan,nan,nan,1020.0,597.0,465.0,lean,2.194,nan,nan,nan,nan,,ok,

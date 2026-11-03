@@ -1,0 +1,52 @@
+== corrected: 48 ok, 0 failed ==
+  against truth, median (range) %: VAT -11.0 (-26.0 to +0.4)   SAT -0.4   truth VAT called SAT 3.1%   truth SAT called VAT 0.0%
+  ellipse fits: 945/960 converged (98.4%), 938 accepted, 0 seed resets; jump-test rejections: subcutaneous 0, visceral 0
+  orientation test reversed on 0 of 48
+== idl_rule: 48 ok, 0 failed ==
+  change vs corrected, median (IQR) %: VAT -0.47 (-0.90 to -0.32)   SAT -0.17 (-0.33 to -0.14)   total -0.27 (-0.56 to -0.18)   threshold +9.63 (+4.57 to +15.22) grey levels
+  cases with VAT changed: >0.1% 46, >1% 12, >5% 0 of 48; max |change| 2.3%
+  against truth, median (range) %: VAT -11.9 (-25.8 to +0.2)   SAT -0.5   truth VAT called SAT 2.7%   truth SAT called VAT 0.0%
+  ellipse fits: 944/960 converged (98.3%), 937 accepted, 0 seed resets; jump-test rejections: subcutaneous 0, visceral 0
+  orientation test reversed on 0 of 48
+== slice0_mask: 48 ok, 0 failed ==
+  change vs corrected, median (IQR) %: VAT +2.44 (+0.66 to +4.46)   SAT +0.56 (+0.16 to +1.67)   total +1.21 (+0.31 to +1.72)   threshold -28.70 (-34.37 to -5.75) grey levels
+  cases with VAT changed: >0.1% 42, >1% 35, >5% 10 of 48; max |change| 164.6%
+  against truth, median (range) %: VAT -5.9 (-24.6 to +126.8)   SAT +0.1   truth VAT called SAT 3.3%   truth SAT called VAT 0.0%
+  ellipse fits: 935/960 converged (97.4%), 929 accepted, 0 seed resets; jump-test rejections: subcutaneous 0, visceral 0
+  orientation test reversed on 0 of 48
+== no_visc_jump: 48 ok, 0 failed ==
+  change vs corrected, median (IQR) %: VAT +0.00 (+0.00 to +0.00)   SAT +0.00 (+0.00 to +0.00)   total +0.00 (+0.00 to +0.00)   threshold +0.00 (+0.00 to +0.00) grey levels
+  cases with VAT changed: >0.1% 0, >1% 0, >5% 0 of 48; max |change| 0.0%
+  against truth, median (range) %: VAT -11.0 (-26.0 to +0.4)   SAT -0.4   truth VAT called SAT 3.1%   truth SAT called VAT 0.0%
+  ellipse fits: 945/960 converged (98.4%), 938 accepted, 0 seed resets; jump-test rejections: subcutaneous 0, visceral 0
+  orientation test reversed on 0 of 48
+== fit_fov: 48 ok, 0 failed ==
+  change vs corrected, median (IQR) %: VAT +0.00 (+0.00 to +0.00)   SAT +0.00 (+0.00 to +0.00)   total +0.00 (+0.00 to +0.00)   threshold +0.00 (+0.00 to +0.00) grey levels
+  cases with VAT changed: >0.1% 0, >1% 0, >5% 0 of 48; max |change| 0.0%
+  against truth, median (range) %: VAT -11.0 (-26.0 to +0.4)   SAT -0.4   truth VAT called SAT 3.1%   truth SAT called VAT 0.0%
+  ellipse fits: 945/960 converged (98.4%), 938 accepted, 0 seed resets; jump-test rejections: subcutaneous 0, visceral 0
+  orientation test reversed on 0 of 48
+== fit_any: 48 ok, 0 failed ==
+  change vs corrected, median (IQR) %: VAT +0.00 (-0.06 to +0.00)   SAT +0.00 (+0.00 to +0.01)   total +0.00 (+0.00 to +0.00)   threshold +0.00 (+0.00 to +0.00) grey levels
+  cases with VAT changed: >0.1% 12, >1% 9, >5% 3 of 48; max |change| 8.2%
+  against truth, median (range) %: VAT -11.2 (-28.0 to +0.4)   SAT +0.2   truth VAT called SAT 3.6%   truth SAT called VAT 0.0%
+  ellipse fits: 952/982 converged (96.9%), 982 accepted, 0 seed resets; jump-test rejections: subcutaneous 0, visceral 22
+  orientation test reversed on 0 of 48
+== port_prefix: 48 ok, 0 failed ==
+  change vs corrected, median (IQR) %: VAT +0.00 (+0.00 to +4.29)   SAT +0.00 (-1.83 to +0.00)   total +0.00 (+0.00 to +0.00)   threshold +0.00 (+0.00 to +0.00) grey levels
+  cases with VAT changed: >0.1% 13, >1% 12, >5% 12 of 48; max |change| 87.9%
+  against truth, median (range) %: VAT -9.7 (-26.0 to +72.2)   SAT -0.8   truth VAT called SAT 4.0%   truth SAT called VAT 0.0%
+  ellipse fits: 901/960 converged (93.9%), 960 accepted, 0 seed resets; jump-test rejections: subcutaneous 0, visceral 0
+  orientation test reversed on 0 of 48
+== abd_auto: 48 ok, 0 failed ==
+  change vs corrected, median (IQR) %: VAT +0.00 (+0.00 to +0.00)   SAT +0.00 (+0.00 to +0.00)   total +0.00 (+0.00 to +0.00)   threshold +0.00 (+0.00 to +0.00) grey levels
+  cases with VAT changed: >0.1% 0, >1% 0, >5% 0 of 48; max |change| 0.0%
+  against truth, median (range) %: VAT -11.0 (-26.0 to +0.4)   SAT -0.4   truth VAT called SAT 3.1%   truth SAT called VAT 0.0%
+  ellipse fits: 945/960 converged (98.4%), 938 accepted, 0 seed resets; jump-test rejections: subcutaneous 0, visceral 0
+  orientation test reversed on 0 of 48
+== pro_as_written: 48 ok, 0 failed ==
+  change vs corrected, median (IQR) %: VAT -0.47 (-0.90 to -0.32)   SAT -0.17 (-0.33 to -0.14)   total -0.27 (-0.56 to -0.18)   threshold +9.63 (+4.57 to +15.22) grey levels
+  cases with VAT changed: >0.1% 46, >1% 12, >5% 0 of 48; max |change| 2.3%
+  against truth, median (range) %: VAT -11.9 (-25.8 to +0.2)   SAT -0.5   truth VAT called SAT 2.7%   truth SAT called VAT 0.0%
+  ellipse fits: 944/960 converged (98.3%), 937 accepted, 0 seed resets; jump-test rejections: subcutaneous 0, visceral 0
+  orientation test reversed on 0 of 48

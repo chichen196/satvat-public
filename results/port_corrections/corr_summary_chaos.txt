@@ -1,0 +1,52 @@
+== corrected: 40 ok, 0 failed ==
+  against the model, median (IQR): VAT difference +3.36 (-5.27 to +11.62)%   misassignment sum +11.23 (+6.66 to +13.66)%   VAT Dice 0.720   rejected VAT +26.73 (+23.79 to +38.09)%
+  ellipse fits: 1562/1610 converged (97.0%), 1543 accepted, 0 seed resets; jump-test rejections: subcutaneous 0, visceral 0
+  orientation test reversed on 10 of 40: chaos_0001, chaos_0003, chaos_0006, chaos_0010, chaos_0014, chaos_0017, chaos_0018, chaos_0019, chaos_0027, chaos_0036
+== idl_rule: 40 ok, 0 failed ==
+  change vs corrected, median (IQR) %: VAT +0.99 (-3.72 to +3.77)   SAT -0.03 (-1.44 to +1.23)   total +0.45 (-2.01 to +2.37)   threshold +0.57 (-6.25 to +7.70) grey levels (-0.17 (-1.07 to +1.43)%)
+  cases with VAT changed: >0.1% 39, >1% 34, >5% 14 of 40; max |change| 28.5%
+  against the model, median (IQR): VAT difference +3.75 (-4.52 to +14.61)%   misassignment sum +11.38 (+6.70 to +13.31)%   VAT Dice 0.712   rejected VAT +27.32 (+23.12 to +39.93)%
+  ellipse fits: 1558/1610 converged (96.8%), 1539 accepted, 0 seed resets; jump-test rejections: subcutaneous 0, visceral 0
+  orientation test reversed on 9 of 40: chaos_0001, chaos_0003, chaos_0006, chaos_0014, chaos_0017, chaos_0018, chaos_0019, chaos_0027, chaos_0036
+== slice0_mask: 40 ok, 0 failed ==
+  change vs corrected, median (IQR) %: VAT +10.90 (+7.06 to +15.15)   SAT +5.72 (+3.74 to +10.94)   total +7.72 (+6.03 to +11.65)   threshold -27.23 (-41.61 to -18.52) grey levels (-7.29 (-10.10 to -5.42)%)
+  cases with VAT changed: >0.1% 40, >1% 40, >5% 33 of 40; max |change| 49.1%
+  against the model, median (IQR): VAT difference +15.02 (+4.31 to +31.51)%   misassignment sum +13.97 (+9.32 to +17.58)%   VAT Dice 0.680   rejected VAT +32.66 (+28.99 to +44.14)%
+  ellipse fits: 1538/1610 converged (95.5%), 1524 accepted, 0 seed resets; jump-test rejections: subcutaneous 0, visceral 0
+  orientation test reversed on 10 of 40: chaos_0001, chaos_0003, chaos_0006, chaos_0010, chaos_0014, chaos_0017, chaos_0018, chaos_0019, chaos_0027, chaos_0036
+== no_visc_jump: 40 ok, 0 failed ==
+  change vs corrected, median (IQR) %: VAT +0.00 (+0.00 to +0.00)   SAT +0.00 (+0.00 to +0.00)   total +0.00 (+0.00 to +0.00)   threshold +0.00 (+0.00 to +0.00) grey levels (+0.00 (+0.00 to +0.00)%)
+  cases with VAT changed: >0.1% 0, >1% 0, >5% 0 of 40; max |change| 0.0%
+  against the model, median (IQR): VAT difference +3.36 (-5.27 to +11.62)%   misassignment sum +11.23 (+6.66 to +13.66)%   VAT Dice 0.720   rejected VAT +26.73 (+23.79 to +38.09)%
+  ellipse fits: 1562/1610 converged (97.0%), 1543 accepted, 0 seed resets; jump-test rejections: subcutaneous 0, visceral 0
+  orientation test reversed on 10 of 40: chaos_0001, chaos_0003, chaos_0006, chaos_0010, chaos_0014, chaos_0017, chaos_0018, chaos_0019, chaos_0027, chaos_0036
+== fit_fov: 40 ok, 0 failed ==
+  change vs corrected, median (IQR) %: VAT +0.00 (+0.00 to +0.00)   SAT +0.00 (+0.00 to +0.00)   total +0.00 (+0.00 to +0.00)   threshold +0.00 (+0.00 to +0.00) grey levels (+0.00 (+0.00 to +0.00)%)
+  cases with VAT changed: >0.1% 0, >1% 0, >5% 0 of 40; max |change| 0.0%
+  against the model, median (IQR): VAT difference +3.36 (-5.27 to +11.62)%   misassignment sum +11.23 (+6.66 to +13.66)%   VAT Dice 0.720   rejected VAT +26.73 (+23.79 to +38.09)%
+  ellipse fits: 1562/1610 converged (97.0%), 1543 accepted, 0 seed resets; jump-test rejections: subcutaneous 0, visceral 0
+  orientation test reversed on 10 of 40: chaos_0001, chaos_0003, chaos_0006, chaos_0010, chaos_0014, chaos_0017, chaos_0018, chaos_0019, chaos_0027, chaos_0036
+== fit_any: 40 ok, 0 failed ==
+  change vs corrected, median (IQR) %: VAT +0.00 (-2.06 to +0.00)   SAT +0.00 (+0.00 to +1.44)   total +0.00 (+0.00 to +0.00)   threshold +0.00 (+0.00 to +0.00) grey levels (+0.00 (+0.00 to +0.00)%)
+  cases with VAT changed: >0.1% 15, >1% 14, >5% 6 of 40; max |change| 10.0%
+  against the model, median (IQR): VAT difference +2.59 (-9.33 to +10.43)%   misassignment sum +12.06 (+7.28 to +18.85)%   VAT Dice 0.712   rejected VAT +26.69 (+23.80 to +38.09)%
+  ellipse fits: 1581/1677 converged (94.3%), 1677 accepted, 0 seed resets; jump-test rejections: subcutaneous 0, visceral 67
+  orientation test reversed on 10 of 40: chaos_0001, chaos_0003, chaos_0006, chaos_0010, chaos_0014, chaos_0017, chaos_0018, chaos_0019, chaos_0027, chaos_0036
+== port_prefix: 40 ok, 0 failed ==
+  change vs corrected, median (IQR) %: VAT +0.00 (+0.00 to +45.01)   SAT +0.00 (-30.73 to +0.00)   total +0.00 (+0.00 to +0.00)   threshold +0.00 (+0.00 to +0.00) grey levels (+0.00 (+0.00 to +0.00)%)
+  cases with VAT changed: >0.1% 15, >1% 15, >5% 15 of 40; max |change| 166.8%
+  against the model, median (IQR): VAT difference +16.04 (+2.76 to +44.93)%   misassignment sum +13.42 (+8.91 to +54.99)%   VAT Dice 0.651   rejected VAT +38.50 (+24.85 to +56.12)%
+  ellipse fits: 1388/1610 converged (86.2%), 1610 accepted, 0 seed resets; jump-test rejections: subcutaneous 0, visceral 0
+  orientation test reversed on 10 of 40: chaos_0001, chaos_0003, chaos_0006, chaos_0010, chaos_0014, chaos_0017, chaos_0018, chaos_0019, chaos_0027, chaos_0036
+== abd_auto: 40 ok, 0 failed ==
+  change vs corrected, median (IQR) %: VAT +0.00 (+0.00 to +0.00)   SAT +0.00 (+0.00 to +0.00)   total +0.00 (+0.00 to +0.00)   threshold +0.00 (+0.00 to +0.00) grey levels (+0.00 (+0.00 to +0.00)%)
+  cases with VAT changed: >0.1% 10, >1% 8, >5% 3 of 40; max |change| 11.2%
+  against the model, median (IQR): VAT difference +3.36 (-9.33 to +11.62)%   misassignment sum +10.90 (+8.46 to +16.07)%   VAT Dice 0.714   rejected VAT +26.91 (+23.79 to +37.95)%
+  ellipse fits: 1559/1610 converged (96.8%), 1539 accepted, 0 seed resets; jump-test rejections: subcutaneous 0, visceral 0
+  orientation test reversed on 10 of 40: chaos_0001, chaos_0003, chaos_0006, chaos_0010, chaos_0014, chaos_0017, chaos_0018, chaos_0019, chaos_0027, chaos_0036
+== pro_as_written: 40 ok, 0 failed ==
+  change vs corrected, median (IQR) %: VAT -0.07 (-3.91 to +3.62)   SAT -0.01 (-1.19 to +1.66)   total +0.45 (-2.01 to +2.37)   threshold +0.57 (-6.25 to +7.70) grey levels (-0.17 (-1.07 to +1.43)%)
+  cases with VAT changed: >0.1% 39, >1% 33, >5% 15 of 40; max |change| 28.5%
+  against the model, median (IQR): VAT difference +3.59 (-9.56 to +14.61)%   misassignment sum +11.24 (+8.15 to +15.24)%   VAT Dice 0.706   rejected VAT +27.55 (+23.12 to +39.93)%
+  ellipse fits: 1553/1610 converged (96.5%), 1534 accepted, 0 seed resets; jump-test rejections: subcutaneous 0, visceral 0
+  orientation test reversed on 9 of 40: chaos_0001, chaos_0003, chaos_0006, chaos_0014, chaos_0017, chaos_0018, chaos_0019, chaos_0027, chaos_0036
