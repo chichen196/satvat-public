@@ -28,8 +28,8 @@ undo one correction each (see `port_corrections.py`).
 ## Data
 
 **AATCT-IDS** (Ma et al., *Comput Biol Med* 2024;177:108628): 300 subjects, 3,213 labelled CT slices.
-Download: <https://figshare.com/articles/dataset/AATTCT-IDS/23807256>. The figshare record states no licence;
-cite the dataset paper when you use it.
+Its authors publish it for non-commercial use (Ma et al., 2024); the figshare record itself carries no licence:
+<https://figshare.com/articles/dataset/AATTCT-IDS/23807256>.
 Expected layout under `--root`: `Image/Extracted/patient_NNN/FILEnnn.jpg`,
 `Label/Subcutaneous/patient_NNN/FILEnnn.png`, `Label/Visceral/patient_NNN/FILEnnn.png`.
 
@@ -98,7 +98,6 @@ variation upstream of all three (most likely the N4 bias correction) rather than
 
 ## Licence
 
-Code: MIT (`LICENSE`). Derived tables in `results/`: CC BY-NC-SA 4.0 (`results/LICENSE.md`), as required for those
-derived from CHAOS (CC BY-NC-SA 4.0); the same terms are applied to the AATCT-IDS tables, whose
-source record states no licence. Cite the datasets and VIBESegmentator
-when you use them. How to cite this repository is in `CITATION.cff`.
+Code: MIT (`LICENSE`). Derived tables in `results/`: CC BY-NC-SA 4.0 (`results/LICENSE.md`), as they derive
+from CHAOS (CC BY-NC-SA 4.0) and from AATCT-IDS, which its authors publish for non-commercial use.
+Cite the datasets and VIBESegmentator when you use them. How to cite this repository is in `CITATION.cff`.
