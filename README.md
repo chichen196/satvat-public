@@ -14,7 +14,7 @@ Neither dataset is redistributed; download them from their sources (below).
 |---|---|
 | The 2006 method, ported from its IDL source | `fatvol/` (package), `run_fatvol.py` (DICOM driver and self-test) |
 | Wall-following SAT/VAT rule | `wallsep.py` |
-| CT arm (AATCT-IDS) | `aattct_sep.py` (2006 method, its zone and the wall rule on one fat mask), `aattct_unet.py` (2D U-Net, 5-fold CV), `unet_overlay.py` |
+| CT arm (AATCT-IDS) | `aattct_sep.py` (2006 method, its zone and the wall rule on one fat mask), `aattct_unet.py` (2D U-Net, 5-fold CV), `unet_overlay.py`, `unet_variants.py` (Supplementary Tables S1–S2) |
 | MRI arm (CHAOS) | `chaos_labels.py`, `chaos_mri_screen.py`, `mri_body.py`, `mri_trunk.py`, `run_vibe.py`, `chaos_mri_arm.py` |
 | Port corrections (Table 2) | `port_corrections.py` |
 | Tables and figures | `tables_ct_mri.py` (Tables 3–4), `figs_mri_tables.py` (Figures 3 and 5), `fig1_pipeline.py` (Figure 1), `overlay_figs.py` (Figures 2 and 4) |
@@ -69,6 +69,12 @@ python3 aattct_sep.py --root $AATCT --n 0 --abd-up 0 --wall-open 0.78 --wall-clo
 python3 aattct_unet.py --root $AATCT --mode f2m --tta --fold all --folds-from results/ct/folds.csv --out runs/unet_f2m
 python3 tables_ct_mri.py table3 --sep runs/aattct_sep_wallB/sep_slices.csv --unet runs/unet_f2m/sep_slices_unet.csv
 
+# Supplementary Tables S1-S2: the other two U-Net variants on the same folds, without flip averaging
+python3 aattct_unet.py --root $AATCT --mode 3class --fold all --folds-from results/ct/folds.csv --out runs/unet_3class
+python3 aattct_unet.py --root $AATCT --mode f2 --fold all --folds-from results/ct/folds.csv --out runs/unet_f2
+python3 unet_variants.py --run 3class=runs/unet_3class --run f2=runs/unet_f2 --run f2m=runs/unet_f2m \
+        --drop patient_179,patient_260 --out runs/unet_variants.csv
+
 # MRI arm (Table 4, Figures 3 and 5): screen, then the arm with the MRI and the CT wall settings
 python3 chaos_mri_screen.py --root $CHAOS --out runs/chaos_screen
 python3 chaos_mri_arm.py --root $CHAOS --out mri_arm/results3
@@ -87,12 +93,16 @@ python3 overlay_figs.py fig5 --root $CHAOS --out figs --rows skin:38,leak:1,pass
 ```
 
 The U-Net was trained on an Intel Arc B580 (about an hour per fold at 512 px); the other steps run on a CPU
-in minutes to an hour. `results/` holds the tables these commands produced for the paper, so Tables 2–4
-and Figures 3 and 5 can be checked without rerunning anything, for example
-`python3 tables_ct_mri.py table4 --mri results/mri/arm_cases_mri.csv --ct results/mri/arm_cases_ct_setting.csv`.
+in minutes to an hour. `results/` holds the tables these commands produced for the paper, so Tables 2–4,
+Supplementary Tables S1–S2 and Figures 3 and 5 can be checked without rerunning anything, for example
+`python3 tables_ct_mri.py table4 --mri results/mri/arm_cases_mri.csv --ct results/mri/arm_cases_ct_setting.csv`, or
+`python3 unet_variants.py --run 3class=results/ct/sep_slices_unet_3class.csv --run f2=results/ct/sep_slices_unet_f2.csv
+--run f2m=results/ct/sep_slices_unet_f2m.csv --drop patient_179,patient_260` for Supplementary Tables S1–S2.
+The 3class run was made with an earlier version of `aattct_unet.py`, before the `--mode` option was added.
 
-The CT commands reproduce `results/` exactly. The MRI commands reproduce it to within rounding: rerunning
-three cases under both wall settings changed no volume by more than 0.4 mL and no percentage by more than
+The `aattct_sep.py` command reproduces its table in `results/` exactly. Retraining the U-Net reproduces its tables
+only up to the run-to-run variation of training on a GPU, which was not measured.
+The MRI commands reproduce `results/` to within rounding: rerunning three cases under both wall settings changed no volume by more than 0.4 mL and no percentage by more than
 0.01 points, in the 2006 method and its zone as much as in the wall rule, which points to floating-point
 variation upstream of all three (most likely the N4 bias correction) rather than to the method.
 
