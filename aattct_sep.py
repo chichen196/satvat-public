@@ -12,6 +12,10 @@ splits F into SAT and VAT against the annotators.
              that seeds the method's conditional dilation of SAT)
     body   = filled skin contour (grey > --body) united with the labels
 
+--score-fat-hi (Nov 2026) scores on a stricter fat definition, F & grey <= that value,
+while every method still runs on the full F: an evaluation-only sensitivity analysis,
+comparable with totalseg_aattct.py score --fat-hi and unet_rescore.py --fat-hi.
+
 Three splits are scored:
     meth : the 2006 method's own labels (pfatmask = SAT, vfatmask = VAT, rest = neither)
     zone : the 2006 method's visceral zone (zones == 2) applied to F; no 'neither'
@@ -21,7 +25,7 @@ Three splits are scored:
 Each subject's annotated slices (5 mm apart) are run as one volume in file-number
 order, because the method carries its ellipse guess from slice to slice.
 
-    aattct_sep.py --root /path/to/AATTCT-IDS --n 3 --png 6 --abd-up 0 --out runs/aattct_sep_up0
+    aattct_sep.py --root /data/LCClinic/fat/AATTCT-IDS --n 3 --png 6 --abd-up 0 --out runs/aattct_sep_up0
     aattct_sep.py --root ... --n 3 --png 6 --abd-up 1 --out runs/aattct_sep_up1
         (pilot: the orientation flag is a property of how the images are stored,
          so settle it once on a few subjects, then run all with that value)
@@ -46,7 +50,7 @@ called VAT blue, method 'neither' magenta).  Pixel spacing is unknown (images we
 cropped), so --px only scales the method's mm-based constants; results are in pixels.
 
 Needs fatvol (with the Oct-2026 fatmask_in patch in segment.py), numpy, scipy,
-pillow, matplotlib.  Run from the repository folder so `fatvol` imports.
+pillow, matplotlib.  Run from ~/wfhtmu/python/fat so `fatvol` imports.
 """
 import argparse, csv, random, re, sys, time
 from pathlib import Path
@@ -62,6 +66,9 @@ ap.add_argument('--root', required=True)
 ap.add_argument('--n', type=int, default=3, help='random subjects (0 = all)')
 ap.add_argument('--subjects', default='', help='comma list of patient_NNN, overrides --n')
 ap.add_argument('--fat-hi', type=float, default=79, help='fat = grey <= this (p95 of SAT labels, aattct_probe)')
+ap.add_argument('--score-fat-hi', type=float, default=None,
+                help='score only fat pixels with grey <= this (default: --fat-hi). The methods still get the '
+                     'full fat mask F; only the evaluation set shrinks (a stricter fat definition, Nov 2026)')
 ap.add_argument('--cfat-hi', type=float, default=40, help='confident-fat seed = grey <= this')
 ap.add_argument('--body', type=float, default=40)
 ap.add_argument('--px', type=float, default=0.78, help='assumed pixel size (mm); unknown after cropping')
@@ -156,6 +163,7 @@ for sd in subj:
             B[i] = cc == (np.argmax(np.bincount(cc.ravel())[1:]) + 1)
     F = B & (G <= a.fat_hi) & (S | V)
     C = F & (G <= a.cfat_hi)
+    Fs = F if a.score_fat_hi is None else F & (G <= a.score_fat_hi)   # pixels that are scored
     # centre the body: the bounding box of the body over all slices is moved to the
     # image centre for the method, and every output is moved back afterwards
     dy = dx = 0
@@ -201,27 +209,27 @@ for sd in subj:
                 WZ[i], wi = wall_zone(F[i], B[i], a.px, nonfat=nf, **WALL_KW)
             winfo.append(wi)
         SPLITS['wall'] = (F & ~WZ, F & WZ)
-    RS, RV = F & S, F & V
+    RS, RV = Fs & S, Fs & V
     for i, sid in enumerate(ids):
-        row = dict(subject=sd.name, slice=sid, F_px=int(F[i].sum()),
+        row = dict(subject=sd.name, slice=sid, F_px=int(Fs[i].sum()),
                    ref_sat=int(RS[i].sum()), ref_vat=int(RV[i].sum()))
         if winfo:
             row.update(wall_close_mm=winfo[i]['close_mm'], wall_closed=int(winfo[i]['closed']),
                        wall_leak_bins=winfo[i]['leak_bins'], wall_leak_px=winfo[i]['leak_moved_px'])
         for tag, (msa, mva) in SPLITS.items():
-            ms, mv = msa[i], mva[i]
+            ms, mv = msa[i] & Fs[i], mva[i] & Fs[i]
             row.update({f'{tag}_sat': int(ms.sum()), f'{tag}_vat': int(mv.sum()),
-                        f'{tag}_none': int((F[i] & ~ms & ~mv).sum()),
+                        f'{tag}_none': int((Fs[i] & ~ms & ~mv).sum()),
                         f'{tag}_vat2sat': int((RV[i] & ms).sum()), f'{tag}_sat2vat': int((RS[i] & mv).sum()),
                         f'{tag}_dice_sat': round(dice(ms, RS[i]), 4), f'{tag}_dice_vat': round(dice(mv, RV[i]), 4)})
         rows.append(row)
         if pngs < a.png:
             import matplotlib; matplotlib.use('Agg'); import matplotlib.pyplot as plt
             gray = np.dstack([G[i] / 255.0] * 3); ov = gray.copy()
-            OS, OV = SPLITS[a.overlay][0][i], SPLITS[a.overlay][1][i]
+            OS, OV = SPLITS[a.overlay][0][i] & Fs[i], SPLITS[a.overlay][1][i] & Fs[i]
             for m, c in ((RS[i] & OS, (1, .55, 0)), (RV[i] & OV, (0, .8, 1)),
                          (RV[i] & OS, (1, 0, 0)), (RS[i] & OV, (0, 0, 1)),
-                         (F[i] & ~OS & ~OV, (1, 0, 1))):
+                         (Fs[i] & ~OS & ~OV, (1, 0, 1))):
                 ov[m] = .35 * gray[m] + .65 * np.array(c)
             fig, ax = plt.subplots(1, 2, figsize=(10, 5.2))
             ax[0].imshow(gray); ax[1].imshow(ov)
