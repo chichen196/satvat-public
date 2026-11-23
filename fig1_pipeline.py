@@ -13,7 +13,7 @@ plt.rcParams.update({'font.family': 'sans-serif',
                      'font.size': 6.5, 'pdf.fonttype': 42})
 INK, INK2 = '#0b0b0b', '#52514e'
 DATA, STEP, LINE = '#dbe9fb', '#f0efec', '#8a8984'
-W, H = 174.0, 128.0
+W, H = 174.0, 138.0
 fig = plt.figure(figsize=(W / 25.4, H / 25.4))
 ax = fig.add_axes([0, 0, 1, 1]); ax.set_xlim(0, W); ax.set_ylim(0, H); ax.axis('off')
 
@@ -46,41 +46,41 @@ def band(y, h, letter, title):
 
 
 # ---- A: the port
-band(97, 29, 'a', 'The 2006 method, reimplemented from its IDL source')
-a1 = box(5, 100, 27, 16, 'IDL source', 'estfatvolmriv2.pro\n(2003–2007) and the\nthreshold program', 'data')
-a2 = box(37, 100, 27, 16, 'Python port', 'function by function,\ncompared on\nsynthetic phantoms')
-a3 = box(69, 99, 71, 18.5, 'Four departures, corrected',
-         '1  threshold: Ridler–Calvard, not the IDL integer-bin-width loop\n'
+band(107, 29, 'a', 'The 2006 method, reimplemented from its IDL source')
+a1 = box(5, 110, 27, 16, 'IDL source', 'estfatvolmriv2.pro\n(2003–2007) and the\nthreshold program', 'data')
+a2 = box(37, 110, 27, 16, 'Python port', 'function by function,\ncompared on\nsynthetic phantoms')
+a3 = box(69, 110, 71, 16, 'Four departures, corrected',
+         '1  threshold: Ridler–Calvard intermeans, not the IDL integer-bin-width loop\n'
          '2  threshold program: each slice’s own outline, not slice 0’s\n'
-         '3  visceral ellipse fit: the subcutaneous pass’s jump test added\n'
-         '4  orientation from the image header, not from the non-fat test\n'
-         'port only: non-converged fits rejected (IDL’s AMOEBA would stop)', align='left')
-a4 = box(145, 100, 25, 16, 'Corrected method', 'effect of each\ncorrection, phantoms\nand CHAOS: Table 2', 'out')
+         '3  ellipse fits: converged fits only; jump test in the visceral pass\n'
+         '4  orientation from the image header, not from the non-fat test', align='left')
+a4 = box(145, 110, 25, 16, 'Corrected method', 'effect of each\ncorrection, phantoms\nand CHAOS: Table 2', 'out')
 for p, q in ((a1, a2), (a2, a3), (a3, a4)):
     arrow(p, q)
 
 # ---- B: CT arm
-band(52.5, 42.5, 'b', 'CT arm: three boundaries on one fat mask')
-b1 = box(5, 63.5, 30, 18, 'AATCT-IDS', '300 subjects\n3,213 slices, 5 mm\nexpert SAT and VAT\nlabels', 'data')
-b2 = box(41, 63.5, 30, 18, 'Common fat mask F', 'body, grey ≤ 79, and\nlabelled SAT or VAT;\nthe threshold cannot\nrun on 8-bit JPEGs')
-m1 = box(78, 78, 50, 10, '2006 method (corrected)', 'ellipse boundary: own split and visceral zone', 'method')
-m2 = box(78, 67.5, 50, 10, 'Wall-following rule', 'muscle ring closed and filled; setting B', 'method')
-m3 = box(78, 57, 50, 10, 'U-Net (f2m)', 'moves the boundary within F; 5-fold CV by subject', 'method')
-b4 = box(135, 61.5, 35, 21, 'Scored against labels', 'misassigned share of F,\nVAT and SAT %RMSE;\nsettings on odd subjects,\neven half held out (n = 155)\nTable 3, Figure 2', 'out')
+band(52.5, 52.5, 'b', 'CT arm: four boundaries on one fat mask')
+b1 = box(5, 69, 30, 18, 'AATCT-IDS', '300 subjects\n3,213 slices, 5 mm\nexpert SAT and VAT\nlabels', 'data')
+b2 = box(41, 69, 30, 18, 'Common fat mask F', 'body, grey ≤ 79, and\nlabelled SAT or VAT;\nthe threshold cannot\nrun on 8-bit JPEGs')
+m1 = box(78, 89, 50, 10, '2006 method (corrected)', 'ellipse boundary: own split and visceral zone', 'method')
+m2 = box(78, 78.5, 50, 10, 'Wall-following rule', 'muscle ring closed and filled; setting B', 'method')
+m3 = box(78, 68, 50, 10, 'U-Net (f2m)', 'moves the boundary within F; 5-fold CV by subject', 'method')
+m4 = box(78, 57.5, 50, 10, 'TotalSegmentator 2.18.0', 'tissue_types, on HU rebuilt from the JPEG window', 'method')
+b4 = box(135, 65, 35, 27, 'Scored against labels', 'misassigned and\nunassigned shares of F,\nVAT and SAT %RMSE;\nsettings on odd subjects,\neven half held out (n = 155)\nTable 3, Figure 2,\nTable S3', 'out')
 arrow(b1, b2)
-for m in (m1, m2, m3):
+for m in (m1, m2, m3, m4):
     arrow(b2, m); arrow(m, b4)
 
 # ---- C: MRI arm
-band(3, 46, 'c', 'MRI arm: threshold VAT against an anatomy-aware model')
+band(3, 46, 'c', 'MRI arm: threshold VAT against two anatomy-aware models')
 c1 = box(5, 22, 26, 18, 'CHAOS', '40 subjects, 1.5 T\nT1 in-phase GRE\n805 abdominal\nslices', 'data')
 c2 = box(35, 22, 27, 18, 'Trunk', 'arms cut at their\nnotches; slices below\nthe lungs; edge-cut\nslices left out')
 c3 = box(66, 28, 24, 12, 'Threshold fat', 'Ridler–Calvard;\noriginal and N4')
 n1 = box(95, 33.5, 38, 10, '2006 method (corrected)', 'own split and visceral zone', 'method')
-n2 = box(95, 22, 38, 10, 'Wall-following rule', 'CT setting; MRI setting', 'method')
-n3 = box(66, 7, 67, 10, 'VIBESegmentator (pretrained, not retrained)',
-         'on the original image: SAT minus the skin band; inner fat = VAT', 'method')
-c5 = box(139, 12.5, 31, 23, 'Compared with model', 'misassignment within\nthe threshold fat;\nmake-up of threshold\nVAT the model rejects;\ndim fat missed\nTable 4, Figures 3–5', 'out')
+n2 = box(95, 22, 38, 10, 'Wall-following rule', 'CT setting; MRI setting (exploratory)', 'method')
+n3 = box(66, 5.5, 67, 13, 'Two pretrained models, not retrained',
+         'VIBESegmentator (primary); TotalSegmentator MRI 2.18.0\non the original image: SAT minus the skin band; inner fat = VAT', 'method')
+c5 = box(139, 12.5, 31, 25, 'Against each model', 'misassignment within\nthe threshold fat;\nmake-up of threshold\nVAT the model rejects;\ndim fat missed\nTables 4–5, Figures 3–5', 'out')
 arrow(c1, c2); arrow(c2, c3)
 arrow(c3, n1); arrow(c3, n2)
 arrow(c2, n3, y1=25, y2=12)

@@ -81,7 +81,7 @@ DEFAULT_LABELS = {1: 'subcutaneous_fat', 2: 'torso_fat', 3: 'skeletal_muscle'}
 
 def num(p):
     d = re.findall(r'\d+', p.stem)
-    return int(d[-1]) if d else -1
+    return int(d[0]) if d else -1
 
 
 def grey(p):
@@ -198,7 +198,7 @@ def load_seg(s):
         return None, None
     seg = np.asarray(nib.load(str(p)).dataobj).astype(np.int16)
     stems = (out / 'nifti' / f'{s}.files.txt').read_text().split()
-    return seg, {st: k for k, st in enumerate(stems)}
+    return seg, {num(Path(st)): k for k, st in enumerate(stems)}
 
 
 def split_slice(seg, k, names):
@@ -228,14 +228,14 @@ def score():
         for ip in sorted((root / 'Image' / 'Extracted' / s).glob('*.jp*g'), key=num):
             sp = find(root / 'Label' / 'Subcutaneous' / s, ip.stem)
             vp = find(root / 'Label' / 'Visceral' / s, ip.stem)
-            if sp is None or vp is None or ip.stem not in idx:
+            if sp is None or vp is None or num(ip) not in idx:
                 continue
             g = grey(ip)
             S, V = lab(sp), lab(vp)
             body = body_mask(g) | S | V
             F = body & (g <= a.fat_hi) & (S | V)
             S, V = F & S, F & V
-            PS, PV = split_slice(seg, idx[ip.stem], names)
+            PS, PV = split_slice(seg, idx[num(ip)], names)
             PS, PV = F & PS, F & PV & ~PS
             r = dict(subject=s, slice=ip.stem, F=int(F.sum()), S=int(S.sum()), V=int(V.sum()),
                      pred_S=int(PS.sum()), pred_V=int(PV.sum()),
@@ -289,7 +289,7 @@ def png():
             g = grey(ip)
             S = lab(find(root / 'Label' / 'Subcutaneous' / s, ip.stem))
             V = lab(find(root / 'Label' / 'Visceral' / s, ip.stem))
-            PS, PV = split_slice(seg, idx[ip.stem], names)
+            PS, PV = split_slice(seg, idx[num(ip)], names)
             base = np.dstack([g / 255.0] * 3)
             fig, ax = plt.subplots(1, 2, figsize=(10, 5.2))
             for x, (ss, vv, title) in zip(ax, ((S, V, 'annotators'), (PS, PV, 'TotalSegmentator'))):

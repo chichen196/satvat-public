@@ -2,8 +2,9 @@
 """overlay_figs.py - Figures 2 and 5 of the manuscript: the overlay panels (Oct 2026).
 
   fig2  CT (AATCT-IDS): the same fat mask F split by the 2006 method, the wall rule
-        (setting B) and the U-Net (f2m), against the annotators, on chosen slices.
-        Columns: image | 2006 method | wall rule | U-Net.
+        (setting B), the U-Net (f2m) and, with --ts-dir, TotalSegmentator (tissue_types),
+        against the annotators, on chosen slices.
+        Columns: image | 2006 method | wall rule | U-Net [| TotalSegmentator].
   fig5  MRI (CHAOS in-phase, original images): why the wall rule needed an MRI setting.
         Rows by mechanism, columns: image | wall rule, CT setting | MRI setting, first pass |
         MRI setting, final | VIBESegmentator.
@@ -17,15 +18,16 @@
 
 Colours (chosen to stay apart under colour-vision deficiency): agreed SAT pale orange,
 agreed VAT pale blue, reference VAT called SAT red, reference SAT called VAT violet, fat
-in neither compartment aqua (2006 method only).  In fig5 the reference is the model and
+in neither compartment green (2006 method and TotalSegmentator).  In fig5 the reference is the model and
 only threshold fat that the model labels SAT or VAT is coloured; the white line is the
 wall rule's zone.
 
-    cd satvat-public              # the repository folder
-    python3 overlay_figs.py fig2 --root /path/to/AATTCT-IDS --unet-run runs/unet_f2m --out figs
+    cd ~/wfhtmu/python/fat        # fatvol, wallsep.py, mri_body.py, mri_trunk.py beside this script
+    python3 overlay_figs.py fig2 --root /data/LCClinic/fat/AATTCT-IDS --unet-run runs/unet_f2m --out figs
     python3 overlay_figs.py fig2 ... --slices patient_074:FILE200,patient_138:FILE126
+    python3 overlay_figs.py fig2 ... --ts-dir ts_final --ts-csv ts_final/ts_slices.csv   # TotalSegmentator column
     python3 overlay_figs.py fig2 ... --candidates runs/aattct_sep_B/sep_slices.csv   # list typical slices
-    python3 overlay_figs.py fig5 --root /path/to/CHAOS --out figs
+    python3 overlay_figs.py fig5 --root /data/LCClinic/fat/CHAOS --out figs
     python3 overlay_figs.py fig5 ... --rows skin:30:z14,leak:1,pass2:33      # :zNN forces a slice
 
 Writes fig2_ct_overlays.{pdf,png,tif} / fig5_mri_wall.{pdf,png,tif}, a _panels/ folder with
@@ -51,6 +53,9 @@ ap.add_argument('--dpi', type=int, default=600)
 ap.add_argument('--slices', default='patient_074:FILE200,patient_138:FILE126', help='fig2: comma list subject:slice')
 ap.add_argument('--unet-run', default='runs/unet_f2m', help='fig2: run folder holding pred/<subject>/<slice>.png')
 ap.add_argument('--sep-csv', default='', help='fig2: sep_slices.csv of the setting-B run, to check the recomputed counts')
+ap.add_argument('--ts-dir', default='', help='fig2: totalseg_aattct.py output folder (nifti/<subject>.files.txt, '
+                'seg/<subject>.nii.gz) - adds a TotalSegmentator column')
+ap.add_argument('--ts-csv', default='', help='fig2: ts_slices.csv of that folder, to check the recomputed counts')
 ap.add_argument('--candidates', default='', help='fig2: sep_slices.csv - list typical slices of the even half and exit')
 ap.add_argument('--fat-hi', type=float, default=79)
 ap.add_argument('--cfat-hi', type=float, default=40)
@@ -144,6 +149,10 @@ def fig2():
     run = Path(a.unet_run)
     want = [tuple(x.strip().split(':', 1)) for x in a.slices.split(',') if ':' in x]
     ref = {}
+    tsref = {}
+    if a.ts_csv:
+        for r in csv.DictReader(open(a.ts_csv)):
+            tsref[(r['subject'], r['slice'])] = r
     if a.sep_csv:
         for r in csv.DictReader(open(a.sep_csv)):
             ref[(r['subject'], r['slice'])] = r
@@ -203,23 +212,42 @@ def fig2():
         Fi, RS, RV = F[i], F[i] & S[i], F[i] & V[i]
         US, UV = Fi & (pred == 1), Fi & (pred == 2)
         splits = {'meth': (MS, MV, Fi & ~MS & ~MV), 'wall': (Fi & ~WZ, Fi & WZ, None), 'unet': (US, UV, Fi & ~US & ~UV)}
+        if a.ts_dir:
+            import nibabel as nib
+            td = Path(a.ts_dir).expanduser()
+            stems = (td / 'nifti' / f'{subj}.files.txt').read_text().split()
+            if sid not in stems:
+                sys.exit(f'{subj}:{sid} is not in its TotalSegmentator series ({td}/nifti/{subj}.files.txt)')
+            seg = nib.load(str(td / 'seg' / f'{subj}.nii.gz'))
+            lab2d = np.asarray(seg.dataobj[:, :, stems.index(sid)]).astype(np.int16).T   # back to (row, col)
+            TS_, TV_ = Fi & (lab2d == 1), Fi & (lab2d == 2)                           # subcutaneous_fat, torso_fat
+            TV_ &= ~TS_
+            splits['ts'] = (TS_, TV_, Fi & ~TS_ & ~TV_)
         line = f'{subj} {sid}: F {int(Fi.sum())}'
-        for t, (s_, v_, _) in splits.items():
-            line += f'  {t} VAT {int(v_.sum())} (V->S {int((RV & s_).sum())}, S->V {int((RS & v_).sum())})'
+        for t, (s_, v_, n_) in splits.items():
+            line += f'  {t} VAT {int(v_.sum())} (V->S {int((RV & s_).sum())}, S->V {int((RS & v_).sum())}'
+            line += f', neither {int(n_.sum())})' if n_ is not None else ')'
             k = (subj, sid)
             if k in ref and f'{t}_vat' in ref[k]:
                 line += f' [csv {ref[k][t + "_vat"]}]'
+            if t == 'ts' and k in tsref:
+                q = tsref[k]
+                line += (f' [ts csv F {q["F"]} VAT {q["pred_V"]} V->S {q["vat_called_sat"]}'
+                         f' S->V {q["sat_called_vat"]} neither {q["neither"]}]')
         check.append(line); print(line)
         panels.append((subj, sid, G[i] / 255.0, B[i], Fi, RS, RV, splits))
 
     cols = [('meth', '2006 method'), ('wall', 'Wall rule, setting B'), ('unet', 'U-Net (f2m)')]
+    if a.ts_dir:
+        cols.append(('ts', 'TotalSegmentator'))
+    nc = len(cols) + 1
     crops = [crop_of(p[3]) for p in panels]
     asp = [(c[1].stop - c[1].start) / (c[0].stop - c[0].start) for c in crops]
-    pw = 174 / 25.4 * 0.99 / (4 + 0.03 * 3)
+    pw = 174 / 25.4 * 0.99 / (nc + 0.03 * (nc - 1))
     hs = [pw / x for x in asp]
     H = sum(hs) * (1 + 0.06) + 0.75
     fig = plt.figure(figsize=(174 / 25.4, H))
-    gs = fig.add_gridspec(len(panels), 4, height_ratios=hs, hspace=0.06, wspace=0.03, left=0.005, right=0.995,
+    gs = fig.add_gridspec(len(panels), nc, height_ratios=hs, hspace=0.06, wspace=0.03, left=0.005, right=0.995,
                           bottom=0.45 / H, top=1 - 0.3 / H)
     for rI, (subj, sid, g, B, Fi, RS, RV, splits) in enumerate(panels):
         cr = crops[rI]
@@ -227,10 +255,15 @@ def fig2():
         for t, title in cols:
             s_, v_, none = splits[t]
             mis = 100 * ((RV & s_).sum() + (RS & v_).sum()) / max(Fi.sum(), 1)
-            imgs.append((paint(g, split_layers(s_, v_, RS, RV, none)), f'{mis:.1f}% of fat misassigned'))
+            lab = f'{mis:.1f}% of fat misassigned'
+            if a.ts_dir:                                       # five narrower columns: shorter labels
+                lab = f'{mis:.1f}% misassigned'
+                if none is not None and none.any():
+                    lab += f'\n{100 * none.sum() / max(Fi.sum(), 1):.1f}% in neither'
+            imgs.append((paint(g, split_layers(s_, v_, RS, RV, none)), lab))
         for cI, (im, lab) in enumerate(imgs):
             axx = fig.add_subplot(gs[rI, cI]); axx.imshow(im[cr], interpolation='nearest'); axx.axis('off')
-            axx.text(0.02, 0.02, lab, transform=axx.transAxes, fontsize=6, color='white', va='bottom',
+            axx.text(0.02, 0.02, lab, transform=axx.transAxes, fontsize=5.5 if a.ts_dir else 6, color='white', va='bottom',
                      bbox=dict(boxstyle='square,pad=0.15', fc='black', ec='none', alpha=0.55))
             if rI == 0:
                 axx.set_title(['Image', *[c[1] for c in cols]][cI], fontsize=7.5, fontweight='bold', pad=3)

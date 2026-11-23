@@ -31,9 +31,20 @@ Threshold VAT the model does not call VAT is broken down by what the model calls
 (its SAT, intestine, organ, muscle, bone, unlabelled); model VAT outside the threshold's
 fat is reported as dim fat missed.
 
-    cd satvat-public               # the repository folder, where fatvol imports
-    python3 chaos_mri_arm.py --root /path/to/CHAOS --cases 1,30,33 --out mri_arm/try
-    python3 chaos_mri_arm.py --root /path/to/CHAOS --out mri_arm/results
+    cd ~/wfhtmu/python/fat         # where fatvol imports; put wallsep.py, mri_trunk.py,
+                                   # mri_body.py and this script here
+    python3 chaos_mri_arm.py --root /data/LCClinic/fat/CHAOS --cases 1,30,33 --out mri_arm/try
+    python3 chaos_mri_arm.py --root /data/LCClinic/fat/CHAOS --out mri_arm/results
+
+Reference model (--ref, Nov 2026): 'vibe' (default, as above) or 'ts' = TotalSegmentator
+tissue_types_mr (<root>/<--ts-dir>/chaos_NNNN.nii.gz, labels --ts-labels for subcutaneous_fat,
+torso_fat, skeletal_muscle), mapped onto the VIBESegmentator codes (SAT 65, VAT 67, muscle 66)
+so every measure is computed by the same code; columns keep the name 'model'.  TotalSegmentator
+has no organ, bowel or bone labels, so its breakdown of rejected threshold VAT has only
+model_sat, muscle and none.  With --ref ts, each case row also compares TotalSegmentator with
+VIBESegmentator on the same trunk and skin band (vibe_* columns: volumes, % difference, Dice).
+
+    python3 chaos_mri_arm.py --root /data/LCClinic/fat/CHAOS --ref ts --out mri_arm/results3_ts
 
 Inputs: <root>/mri_arm/inputs/chaos_NNNN.nii.gz and segs/chaos_NNNN_seg.nii.gz (vibe_pilot.py
 run), <root>/labelsTr/chaos_NNNN.nii.gz where present (kidney slices marked).
@@ -71,6 +82,9 @@ ap.add_argument('--wall-skin-max', type=float, default=None, help='skin band fro
 ap.add_argument('--wall-leak', type=int, default=None, choices=[0, 1], help='leak repair (preset: mri 0, ct 1)')
 ap.add_argument('--wall-high', type=int, default=None, choices=[0, 1], help='second pass with the brighter wall material where the ring is open (preset: mri 1, ct 0)')
 ap.add_argument('--abd-up', type=int, default=0, help="fatvol orientation flag; 0 = anterior at row 0, as fed here")
+ap.add_argument('--ref', default='vibe', choices=['vibe', 'ts'], help='reference model: VIBESegmentator or TotalSegmentator')
+ap.add_argument('--ts-dir', default='ts_mr', help='folder under --root with TotalSegmentator tissue_types_mr output')
+ap.add_argument('--ts-labels', default='1,2,3', help='TotalSegmentator label values of subcutaneous_fat, torso_fat, skeletal_muscle')
 ap.add_argument('--png', default='all', help="'all', 'none', or a comma list of case numbers")
 ap.add_argument('--dpi', type=int, default=90)
 a = ap.parse_args()
@@ -105,6 +119,7 @@ SKIN_CAP = PRESET['skin_max_mm'] if PRESET['skin_max_mm'] is not None else 10.0 
 
 # VIBESegmentator model 100 (as in vibe_pilot.py)
 SAT_L, VAT_L = 65, 67
+TS_SAT, TS_VAT, TS_MUS = (int(x) for x in a.ts_labels.split(','))
 GROUPS = {
     'model_sat': [SAT_L],
     'intestine': [6, 18, 19],
@@ -117,7 +132,7 @@ GROUPS = {
 try:
     from fatvol.segment import est_fat_vol, SUBCUTANEOUS, _ridler_calvard
 except ImportError as e:
-    raise SystemExit(f'fatvol does not import ({e}); run from the repository folder')
+    raise SystemExit(f'fatvol does not import ({e}); run from ~/wfhtmu/python/fat')
 
 
 def to_grid(seg_img, ref_img):
@@ -187,7 +202,7 @@ def run_meth(G, B, px, py, sp):
         if 'tf' not in _warned:
             fields = [k for k in vars(r) if isinstance(getattr(r, k), np.ndarray)]
             print(f'  NOTE: no total-fat mask among the result fields {fields}; using SAT | VAT | '
-                  f'fat in neither from the zones (check the FatResult field names)', file=sys.stderr)
+                  f'fat in neither from the zones (tell Claude the field name)', file=sys.stderr)
             _warned.add('tf')
         F = MS | MV
     else:
@@ -210,14 +225,21 @@ t0 = time.time()
 for cid, ip in roots.items():
     key = f'chaos_{cid:04d}'
     sp_ = arm / 'segs' / f'{key}_seg.nii.gz'
-    if not sp_.exists():
-        print(f'{key}: no segmentation'); continue
+    tp_ = root / a.ts_dir / f'{key}.nii.gz'
+    if not (tp_ if a.ref == 'ts' else sp_).exists():
+        print(f'{key}: no {a.ref} segmentation'); continue
     img = nib.load(str(ip))
     v = np.asanyarray(nib.as_closest_canonical(img).dataobj).astype(np.float32)
     if v.ndim == 4:
         v = v[..., 0]
     zx, zy, zz = (float(x) for x in nib.as_closest_canonical(img).header.get_zooms()[:3])
-    seg = canon(to_grid(nib.load(str(sp_)), img), img).astype(np.int16)
+    vseg = canon(to_grid(nib.load(str(sp_)), img), img).astype(np.int16) if sp_.exists() else None
+    if a.ref == 'ts':
+        t_ = canon(to_grid(nib.load(str(tp_)), img), img).astype(np.int16)
+        seg = np.zeros_like(t_)
+        seg[t_ == TS_SAT], seg[t_ == TS_VAT], seg[t_ == TS_MUS] = SAT_L, VAT_L, 66
+    else:
+        seg = vseg
     lp = root / 'labelsTr' / f'{key}.nii.gz'
     lab = canon(np.asanyarray(nib.load(str(lp)).dataobj).astype(np.int16), img) if lp.exists() else None
     if lab is not None and lab.shape != v.shape:
@@ -245,6 +267,13 @@ for cid, ip in roots.items():
             BAND[i] = skin_band(B[i] & ~(G0[i] >= thr_i), B[i], (zx + zy) / 2, skin_max_mm=SKIN_CAP)
     MSAT = {rim: (SEG == SAT_L) & B & (~BAND if rim == 'band' else (depth > rim)) for rim in RIMS}
     MVAT = (SEG == VAT_L) & B
+    VCMP = None
+    if a.ref == 'ts' and vseg is not None:        # TotalSegmentator against VIBESegmentator, same trunk and skin rule
+        VS = np.stack([s2(vseg[:, :, k]) for k in slab])
+        vsat = (VS == SAT_L) & B & (~BAND if RIM0 == 'band' else (depth > RIM0))
+        vvat = (VS == VAT_L) & B
+        dice = lambda x, y: round(2 * np.count_nonzero(x & y) / max(np.count_nonzero(x) + np.count_nonzero(y), 1), 3)
+        VCMP = (vsat, vvat, dice)
     msat_all = float(np.count_nonzero((SEG == SAT_L) & B))
     vox = zx * zy * zz / 1000.0
     ml = lambda m: float(np.count_nonzero(m)) * vox
@@ -295,6 +324,14 @@ for cid, ip in roots.items():
                     model_sat_in_skin_band_pct=round(100 * np.count_nonzero((SEG == SAT_L) & B & BAND) / max(msat_all, 1), 2))
         for rim in RIMS:
             crow[f'model_sat_{rim_name(rim)}_ml'] = round(ml(MSAT[rim]), 1)
+        crow['reference'] = a.ref
+        if VCMP is not None:
+            vsat, vvat, dice = VCMP
+            vs_ml, vv_ml = ml(vsat), ml(vvat)
+            crow.update(vibe_sat_ml=round(vs_ml, 1), vibe_vat_ml=round(vv_ml, 1),
+                        ref_vs_vibe_sat_pct=round(100 * (msat - vs_ml) / vs_ml, 2) if vs_ml else '',
+                        ref_vs_vibe_vat_pct=round(100 * (mvat - vv_ml) / vv_ml, 2) if vv_ml else '',
+                        ref_vs_vibe_sat_dice=dice(MSAT[RIM0], vsat), ref_vs_vibe_vat_dice=dice(MVAT, vvat))
         for t_, (s_, v_) in splits.items():
             ts, tv = ml(s_), ml(v_)
             crow.update({f'{t_}_sat_ml': round(ts, 1), f'{t_}_vat_ml': round(tv, 1),
@@ -344,7 +381,7 @@ for cid, ip in roots.items():
         ro[m] = 0.3 * ro[m] + 0.7 * np.array(rejcol[gname])
     panels = [(gray, f'{key} z{slab[i]} ({var})'), (paint(*[x[i] for x in splits['meth']]), '2006 method'),
               (paint(*[x[i] for x in splits['wall']]), f'wall rule ({a.wall_set} setting)'),
-              (paint(MSAT[RIM0][i], MVAT[i]), 'model (skin band off)' if RIM0 == 'band' else f'model (skin {RIM0:g} mm off)'),
+              (paint(MSAT[RIM0][i], MVAT[i]), f'{a.ref} (skin band off)' if RIM0 == 'band' else f'{a.ref} (skin {RIM0:g} mm off)'),
               (ro, '2006 VAT not model VAT: SAT org, bowel grn, organ mag, muscle red, bone yel, none wht')]
     fig, ax = plt.subplots(1, 5, figsize=(22, 4.8))
     for x, (im_, t_) in zip(ax, panels):
@@ -369,7 +406,7 @@ for var in VARIANTS:
     q = lambda col: np.array([float(r_[col]) for r_ in rs if r_.get(col) not in ('', None)])
     med = lambda x: f'{np.median(x):+.1f} ({np.percentile(x, 25):+.1f} to {np.percentile(x, 75):+.1f})' if len(x) else 'n/a'
     skin = 'skin band off' if RIM0 == 'band' else f'skin {RIM0:g} mm off'
-    lines.append(f'== {var}: {len(rs)} cases; median (IQR) of % difference against the model (SAT {skin}; wall rule: {a.wall_set} setting) ==')
+    lines.append(f'== {var}: {len(rs)} cases; median (IQR) of % difference against the model = {a.ref} (SAT {skin}; wall rule: {a.wall_set} setting) ==')
     for t_ in ('meth', 'zone', 'wall'):
         lines.append(f'  {t_:5} VAT {med(q(t_ + "_vat_diff_pct"))}   SAT {med(q(t_ + "_sat_diff_pct"))}   VAT Dice {np.median(q(t_ + "_vat_dice")):.3f}'
                      f'   fat misassigned: model SAT->VAT {np.median(q(t_ + "_sat_to_vat_pct")):.1f}%  model VAT->SAT {np.median(q(t_ + "_vat_to_sat_pct")):.1f}%'
@@ -379,6 +416,9 @@ for var in VARIANTS:
     lines.append(f'  2006 VAT the model does not call VAT: {med(q("meth_vat_rejected_pct"))} % of it; by model label (median %): '
                  + ', '.join(f'{g} {np.median(q("rej_" + g + "_pct")):.0f}' for g in GROUPS))
     lines.append(f'  model VAT below the threshold (dim fat missed): {med(q("model_vat_below_thr_pct"))} % of model VAT')
+    if len(q('ref_vs_vibe_vat_pct')):
+        lines.append(f'  {a.ref} against VIBESegmentator: VAT {med(q("ref_vs_vibe_vat_pct"))} %, SAT {med(q("ref_vs_vibe_sat_pct"))} %, '
+                     f'Dice VAT {np.median(q("ref_vs_vibe_vat_dice")):.3f}, SAT {np.median(q("ref_vs_vibe_sat_dice")):.3f}')
 txt = '\n'.join(lines)
 print('\n' + txt + f'\n\n{len(case_rows)} case-variants in {time.time() - t0:.0f} s -> {out}')
 (out / 'arm_summary.txt').write_text(txt + '\n')

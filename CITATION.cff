@@ -4,7 +4,7 @@ title: "satvat-public: SAT/VAT separation on public CT and MRI (code and derived
 authors:
   - family-names: Chen
     given-names: Chi-Hsien
-version: 1.0.0
+version: 1.1.0
 license: MIT
 repository-code: "https://github.com/chichen196/satvat-public"
 preferred-citation:
